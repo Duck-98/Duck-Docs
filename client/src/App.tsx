@@ -1,5 +1,5 @@
-import { TextEditor } from '@components/TextEditor';
 import React from 'react';
+import { TextEditor } from '@components/TextEditor';
 
 const App = () => {
   return <TextEditor />;
