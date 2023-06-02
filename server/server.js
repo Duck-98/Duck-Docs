@@ -6,5 +6,8 @@ const io = require("socket.io")(3095, {
 });
 
 io.on("connection", (socket) => {
+  socket.on("send-change", (delta) => {
+    socket.broadcast.emit("receive-change", delta);
+  });
   console.log("연결되었습니다.");
 });
