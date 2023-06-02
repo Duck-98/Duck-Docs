@@ -27,13 +27,37 @@ export const TextEditor = () => {
     return () => {
       s.disconnect();
     };
-  });
-
-  useEffect(() => {
-    quill.on('text-change', (delta: any, oldDelta: any, source: any) => {
-      if (source !== 'user') return;
-    });
   }, []);
+
+  // 받는 쪽
+  useEffect(() => {
+    if (socket == null || quill == null) return;
+
+    const handler = (delta: any) => {
+      quill.updateContents(delta);
+    };
+    socket.on('receive-change', handler);
+
+    return () => {
+      socket.off('receive-change', handler);
+    };
+  }, [socket, quill]);
+
+  // 보내는 쪽
+  useEffect(() => {
+    if (socket == null || quill == null) return;
+
+    const handler = (delta: any, oldDelta: any, source: any) => {
+      if (source !== 'user') return;
+      socket.emit('send-change', delta);
+    };
+
+    quill.on('text-change', handler);
+    return () => {
+      quill.off('text-change', handler);
+    };
+  }, [socket, quill]);
+  // quill을 작성할 때마다 socket 통신 작동
 
   const wrapperRef = useCallback((wrapper) => {
     if (wrapper == null) return;
@@ -45,8 +69,8 @@ export const TextEditor = () => {
       theme: 'snow',
       modules: { toolbar: TOOLBAR_OPTIONS },
     });
-    q.disable();
-    q.setText('Loading...');
+    // q.disable();
+    // q.setText('Loading...');
     setQuill(q);
   }, []);
 
