@@ -2,25 +2,17 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { Quill } from 'react-quill';
 import 'quill/dist/quill.snow.css';
+import { TOOLBAR_OPTIONS } from '@/constants/quillOption';
 import * as Styled from '@/styles/TextEditor.styles';
-
-const TOOLBAR_OPTIONS = [
-  [{ header: [1, 2, 3, 4, 5, 6, false] }],
-  [{ font: [] }],
-  [{ list: 'ordered' }, { list: 'bullet' }],
-  ['bold', 'italic', 'underline'],
-  [{ color: [] }, { background: [] }],
-  [{ script: 'sub' }, { script: 'super' }],
-  [{ align: [] }],
-  ['image', 'blockquote', 'code-block'],
-  ['clean'],
-];
+import { useParams } from 'react-router';
 
 export const TextEditor = () => {
+  const { id: documentId } = useParams<{ id: string }>();
   const [socket, setSocket] = useState<any>();
   const [quill, setQuill] = useState<any>();
   // const wrapperRef: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
+  // 처음 통신
   useEffect(() => {
     const s = io('http://localhost:3095');
     setSocket(s);
@@ -28,6 +20,16 @@ export const TextEditor = () => {
       s.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    if (socket == null || quill == null) return;
+
+    socket.once('load-document', (document: any) => {
+      quill.setContents(document);
+      quill.enable();
+    });
+    socket.emit('get-document', documentId); // 서버에 documentId 보내기
+  }, [socket, quill, documentId]);
 
   // 받는 쪽
   useEffect(() => {
@@ -69,8 +71,8 @@ export const TextEditor = () => {
       theme: 'snow',
       modules: { toolbar: TOOLBAR_OPTIONS },
     });
-    // q.disable();
-    // q.setText('Loading...');
+    q.disable();
+    q.setText('Loading...');
     setQuill(q);
   }, []);
 
