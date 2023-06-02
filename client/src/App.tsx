@@ -1,8 +1,8 @@
 import React from 'react';
-import { TextEditor } from '@components/TextEditor';
+import Home from '@/pages';
 
 const App = () => {
-  return <TextEditor />;
+  return <Home />;
 };
 
 export default App;
