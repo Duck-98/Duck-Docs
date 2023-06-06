@@ -10,6 +10,7 @@ import GlobalStyle from '@/styles/GlobalStyle';
 import { v4 as uuidV4 } from 'uuid';
 import Login from '@pages/Login';
 import SignUp from '@pages/SignUp';
+import Board from '@pages/Board';
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = process.env.NODE_ENV === 'production' ? 'http://localhost:3090' : 'http://localhost:3090';
@@ -32,6 +33,12 @@ render(
       </Route>
       <Route path="/documents/:id">
         <Document />
+      </Route>
+      <Route path="/boards" exact>
+        <Redirect to={`/boards/${uuidV4()}`} />
+      </Route>
+      <Route path="/boards/:id">
+        <Board />
       </Route>
     </Switch>
   </Router>,
