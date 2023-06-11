@@ -2,6 +2,7 @@ interface ToolSettings {
   lineCap: 'round' | 'butt' | 'square';
   lineJoin: 'round' | 'bevel' | 'miter';
   shadowBlur: number;
+  lineWidth: number;
   globalCompositeOperation: 'source-over' | 'destination-out';
 }
 
@@ -11,6 +12,7 @@ export const changeTool = (tool: string): ToolSettings => {
       return {
         lineCap: 'round',
         lineJoin: 'round',
+        lineWidth: 5,
         shadowBlur: 1,
         globalCompositeOperation: 'source-over',
       };
@@ -18,6 +20,7 @@ export const changeTool = (tool: string): ToolSettings => {
       return {
         lineCap: 'round',
         lineJoin: 'round',
+        lineWidth: 8,
         shadowBlur: 7,
         globalCompositeOperation: 'source-over',
       };
@@ -25,6 +28,7 @@ export const changeTool = (tool: string): ToolSettings => {
       return {
         lineCap: 'butt',
         lineJoin: 'miter',
+        lineWidth: 1,
         shadowBlur: 0,
         globalCompositeOperation: 'source-over',
       };
@@ -32,6 +36,7 @@ export const changeTool = (tool: string): ToolSettings => {
       return {
         lineCap: 'round',
         lineJoin: 'round',
+        lineWidth: 10,
         shadowBlur: 0,
         globalCompositeOperation: 'destination-out',
       };
@@ -39,6 +44,7 @@ export const changeTool = (tool: string): ToolSettings => {
       return {
         lineCap: 'round',
         lineJoin: 'round',
+        lineWidth: 1,
         shadowBlur: 0,
         globalCompositeOperation: 'source-over',
       };
