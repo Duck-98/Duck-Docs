@@ -15,9 +15,13 @@ const GlobalStyle = createGlobalStyle`
         box-sizing: border-box;
       }
       
+  .board {
+    background-color: white;
+  }
+  
   .ql-editor {
     width: 8.5in;
-    min-height: 11in;
+    min-height: 7in;
     padding: 1in;
     margin: 1rem;
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
@@ -51,7 +55,7 @@ const GlobalStyle = createGlobalStyle`
 
   .ql-editor {
     width: 6.5in;
-    height: 9in;
+    height: 7in;
     padding: 0;
     margin: 0;
     box-shadow: none;
