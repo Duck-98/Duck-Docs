@@ -1,19 +1,26 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Stage, Layer, Line } from 'react-konva';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { changeTool } from '@utils/Tool';
+import ColorPicker from './ColorPicker';
+import * as Styled from '@/styles/SketchBoard.styles';
 
 const SketchBoard: React.FC = () => {
   const [lines, setLines] = useState<any[]>([]);
   const [tool, setTool] = useState<string>('pencil');
-  const [currentColor, setCurrentColor] = useState<string>('black');
-  const [size, setSize] = useState<number>(3);
+  const [currentColor, setCurrentColor] = useState<string>('#000000');
+  const [size, setSize] = useState<number>(0);
+  const [open, setOpen] = useState<boolean>(false);
+
+  const handleOpenPicker = () => {
+    setOpen((prev) => !prev);
+  };
 
   const isDrawing = useRef<boolean>(false);
 
   const handleMouseDown = (event: any) => {
+    setOpen(false);
     isDrawing.current = true;
     const { x, y } = event.target.getStage().getPointerPosition();
     setLines([...lines, { tool, color: currentColor, points: [x, y], size }]);
@@ -39,7 +46,6 @@ const SketchBoard: React.FC = () => {
   };
 
   const handleColorChange = (color: string) => {
-    setTool('pen');
     setCurrentColor(color);
   };
 
@@ -51,11 +57,7 @@ const SketchBoard: React.FC = () => {
     setSize((prevSize) => prevSize + 1);
   };
   const handleSizeDown = () => {
-    if (size === 1) {
-      toast('더 이상 작게 할 수 없습니다.');
-    } else {
-      setSize((prevSize) => prevSize - 1);
-    }
+    setSize((prevSize) => prevSize - 1);
   };
 
   const handleChangeTool = (e: any) => {
@@ -65,24 +67,32 @@ const SketchBoard: React.FC = () => {
     changeTool(tool);
   }, [tool]);
   return (
-    <div>
-      <ToastContainer />
-      <div>
-        <button onClick={handleCleanAll}>초기화</button>
-        <button onClick={() => handleColorChange('black')}>Black</button>
-        <button onClick={() => handleColorChange('red')}>Red</button>
-        <button onClick={() => handleColorChange('blue')}>Blue</button>
-        <button onClick={() => handleColorChange('green')}>Green</button>
-        <button onClick={handleSizeUp}>+</button>
-        <button onClick={handleSizeDown}>-</button>
+    <Styled.Container>
+      {/* <ToastContainer />  */}
+      <Styled.ToolBar>
+        <Styled.Button onClick={handleCleanAll}>초기화</Styled.Button>
+        <Styled.Button onClick={() => handleColorChange('black')}>Black</Styled.Button>
+        <Styled.Button onClick={() => handleColorChange('red')}>Red</Styled.Button>
+        <Styled.Button onClick={() => handleColorChange('blue')}>Blue</Styled.Button>
+        <Styled.Button onClick={() => handleColorChange('green')}>Green</Styled.Button>
+        <Styled.Button onClick={handleSizeUp}>+</Styled.Button>
+        <Styled.Button onClick={handleSizeDown}>-</Styled.Button>
         <select value={tool} onChange={(e) => handleChangeTool(e)}>
           <option value="felt-tip">Felt-Tip</option>
           <option value="brush">Brush</option>
           <option value="pencil">Pencil</option>
           <option value="eraser">Eraser</option>
         </select>
-      </div>
+        <ColorPicker
+          setCurrentColor={setCurrentColor}
+          currentColor={currentColor}
+          handleColorChange={handleColorChange}
+          open={open}
+          handleOpenPicker={handleOpenPicker}
+        />
+      </Styled.ToolBar>
       <Stage
+        className="board"
         width={window.innerWidth}
         height={window.innerHeight}
         onMouseDown={handleMouseDown}
@@ -97,18 +107,19 @@ const SketchBoard: React.FC = () => {
                 key={i}
                 points={line.points}
                 stroke={line.color}
-                strokeWidth={line.size}
+                strokeWidth={toolSettings.lineWidth + line.size}
                 tension={0.5}
                 shadowBlur={toolSettings.shadowBlur}
                 lineCap={toolSettings.lineCap}
                 lineJoin={toolSettings.lineJoin}
                 globalCompositeOperation={line.tool === 'eraser' ? 'destination-out' : 'source-over'}
+                fill="red"
               />
             );
           })}
         </Layer>
       </Stage>
-    </div>
+    </Styled.Container>
   );
 };
 
